@@ -1,0 +1,73 @@
+## MDD DNAm score in ALSPAC
+
+### Background
+
+A DNAm model of MDD has been generated in 1824 controls and 1223 cases
+> Barbu, M.C., Shen, X., Walker, R.M. et al. Epigenetic prediction of major depressive disorder. Mol Psychiatry 26, 5112–5123 (2021). 
+
+In independent data it has explained 1.75% of variance in MDD.
+
+### Results in ALSPAC
+
+We used ALSPAC DNAm profiles for the study children from ages 15 and 24 years
+and from their mothers during pregnancy (mean ~29 years old) and approximately 18 years later.
+Depression was assessed around the same time as the DNAm profiles.
+
+Around age 15, depression was determined using
+DAWBA (whether derpessive disorder present by self-report computer prediction, ICD-10 and DSM-IV: fh6892)
+and CIS-R (any ICD-10 diagnosis of depression, mild, moderate or severe: fjci1001). 
+
+Around age 24, depression was determined using the
+CIS-R (mild depression or not: fkdq1000;
+moderate depression or not: fkdq1010;
+severe depression numbers too low).
+
+Depression in mothers was determined using the EPDS (>= 13)
+during pregnancy (at 32 weeks gestation: c600) and
+approximately 18 years later (t3255).
+
+```{r}
+depression.vars <- list(aries.15=c("dawba.15","cisr.17"),
+                        aries.24=c("cisr.mild.24","cisr.mod.24"),
+                        aries.preg="epds.preg",
+                        aries.mid="epds.mid")
+
+stats <- data.frame(dataset=rep(names(depression.vars), sapply(depression.vars,length)),
+                    variable=unlist(depression.vars),
+                    stringsAsFactors=F)
+```
+
+```{r}
+library(pROC)
+for (i in 1:nrow(stats)) {
+    var <- stats$variable[i]
+    ds <- stats$dataset[i]
+    if (all(get(ds)$samples$alnqlet %in% alspac.table$alnqlet))
+        idx <- match(get(ds)$samples$alnqlet, alspac.table$alnqlet)
+    else
+        idx <- match(get(ds)$samples$aln, alspac.table$aln)
+    depression <- alspac.table[[var]][idx]
+    if (is.logical(depression)) depression <- sign(depression)
+    stats$r[i] <- cor(depression, scores[[ds]], use="p")
+    stats$r2[i] <- stats$r[i]^2
+    stats$p[i] <- cor.test(depression, scores[[ds]])$p.value
+    stats$auc[i] <- auc(depression, scores[[ds]])
+    stats$n[i] <- length(which(!is.na(depression) & !is.na(scores[[ds]])))
+    stats$n.cases[i] <- sum(depression,na.rm=T)
+    age <- alspac.table[[paste(var, "age", sep=".")]][idx]
+    na.idx <- which(is.na(depression) | is.na(scores[[ds]]))
+    if (length(na.idx) > 0)
+        age[na.idx] <- NA
+    stats$age.mean[i] <- mean(age,na.rm=T)
+    stats$age.sd[i] <- sd(age,na.rm=T)
+    stats$age.min[i] <- min(age, na.rm=T)
+    stats$age.max[i] <- max(age, na.rm=T)
+    plots.boxplot(score ~ depression, data.frame(score=scores[[ds]], depression=depression),
+                  main=paste(var, " vs mdd(", ds, ")", sep=""),
+                  xlab=var,
+                  ylab="MDD DNAm score")
+}
+rownames(stats) <- NULL
+
+kable(stats,digits=4)
+```
