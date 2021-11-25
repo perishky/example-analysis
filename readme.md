@@ -1,4 +1,4 @@
-#MDD DNAm score in ALSPAC
+# MDD DNAm score in ALSPAC
 
 Test associations between a published
 DNAm model of major depressive disorder
