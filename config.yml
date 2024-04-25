@@ -1,0 +1,12 @@
+default:
+  aries.dir: "/mnt/research/aries"
+  alspac.dir: "/mnt/research/alspac"
+  output.dir: "/home/me/example"
+
+cluster:
+  aries.dir: "/mnt/ieu/research/aries"
+  alspac.dir: "/mnt/ieu/research/alspac"
+  output.dir: "/scratch/me/example"
+
+
+

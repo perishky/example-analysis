@@ -1,9 +1,17 @@
-project.dir <- "[base project directory]"
-alspac.dir <- "[ALSPAC data directory]"
-aries.dir <- "[ARIES data directory]"
+args <- commandArgs(trailingOnly=TRUE)
 
-dir.create(output.dir <- file.path(project.dir, "output"))
-dir.create(object.dir <- file.path(project.dir, "objects"))
+config.name <- "default"
+if (length(args) > 0)
+    config.name <- args[1]
+
+paths <- config::get(config=config.name)
+print(paths)
+
+output.dir <- paths$output.dir
+aries.dir <- paths$aries.dir
+alspac.dir <- paths$alspac.dir
+
+dir.create(object.dir <- file.path(output.dir, "analysis-cache")
 
 ## library for loading alspac data
 ## https://github.com/explodecomputer/alspac

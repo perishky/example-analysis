@@ -10,12 +10,7 @@ The main analysis script is `run-all.r`.
 Rscript run-all.r
 ```
 
-Assumes correct setting of directory paths (top of `run-all.r`), e.g.
-```
-project.dir <- "[base project directory]"
-alspac.dir <- "[ALSPAC data directory]"
-aries.dir <- "[ARIES data directory]"
-```
+File paths are set in config.yml.
 
 Assumes installation of the following R packages:
 
