@@ -6,11 +6,13 @@ and depression in ALSPAC.
 
 The main analysis script is `run-all.r`.
 
+File paths are set in config.yml.
+
 ```
-Rscript run-all.r
+Rscript run-all.r [configuration]
 ```
 
-File paths are set in config.yml.
+Configuration refers the particular configuration in config.yml to use.
 
 Assumes installation of the following R packages:
 
